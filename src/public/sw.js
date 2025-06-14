@@ -1,18 +1,15 @@
 const CACHE_NAME = "StoryApp-V1";
 const STATIC_ASSETS = ["/", "/index.html", "/manifest.json", "/images/logo.png", "/images/favicon.png"];
 
-// ✅ Caching static assets saat install
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)));
 });
 
-// ✅ Membersihkan cache lama saat activate
 self.addEventListener("activate", (event) => {
   event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))));
   self.clients.claim();
 });
 
-// ✅ Menangani permintaan offline dengan cache fallback
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
@@ -30,16 +27,17 @@ self.addEventListener("fetch", (event) => {
 
 // ✅ Menangani push notification
 self.addEventListener("push", (event) => {
-  const data = event.data?.json() || {
-    title: "Notifikasi Baru",
-    body: "Ada pembaruan cerita!",
-  };
+  console.log("Push diterima:", event);
 
-  const options = {
-    body: data.body,
-    icon: "/images/logo.png",
-    badge: "/images/favicon.png",
-  };
+  if (event.data) {
+    const data = event.data.json();
+    const { title, options } = data;
 
-  event.waitUntil(self.registration.showNotification(data.title, options));
+    event.waitUntil(
+      self.registration.showNotification(title, {
+        body: options.body,
+        icon: "/images/logo.png",
+      })
+    );
+  }
 });

@@ -1,7 +1,8 @@
 import "../styles/styles.css";
 import App from "./pages/app";
 import Camera from "./utils/camera";
-import registerPush from "./utils/push-manager"; // ⬅️ Tambahan
+import StoryAPI from "./data/story-api"; // ⬅️ Tambahan
+import { getAccessToken } from "./utils/auth"; // ⬅️ Gunakan ini
 
 document.addEventListener("DOMContentLoaded", async () => {
   const app = new App({
@@ -40,6 +41,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const subscription = await registerPush();
       console.log("🔔 Push Subscription:", subscription);
+
+      // ✅ Kirim subscription ke backend jika user sudah login
+      if (subscription) {
+        const token = getAccessToken(); // pakai dari utils/auth
+        if (token) {
+          await StoryAPI.subscribePushNotification(token, subscription);
+          console.log("✅ Push subscription dikirim ke server");
+        }
+      }
     } catch (error) {
       console.error("❌ Gagal mendaftar SW/Push:", error);
     }

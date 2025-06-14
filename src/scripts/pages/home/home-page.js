@@ -86,24 +86,27 @@ export default class HomePage {
     const hasLocation = story.lat && story.lon;
 
     return `
-      <article class="story-item">
-        <img src="${story.photoUrl}" alt="${story.description}" class="story-image">
-        <div class="story-content">
-          <h3>${story.name || "Guest"}</h3>
-          <time datetime="${story.createdAt}">${showFormattedDate(story.createdAt)}</time>
-          <p>${story.description}</p>
-          ${
-            hasLocation
-              ? `
-                <div class="story-location">
-                  <small>Lokasi: ${story.lat}, ${story.lon}</small>
-                  <div id="${mapId}" class="story-map" style="height: 150px; width: 100%;"></div>
-                </div>
-              `
-              : ""
-          }
-        </div>
-      </article>
-    `;
+    <article class="story-item">
+      <img src="${story.photoUrl}" alt="${story.description}" class="story-image">
+      <div class="story-content">
+        <h3>${story.name || "Guest"}</h3>
+        <time datetime="${story.createdAt}">${showFormattedDate(story.createdAt)}</time>
+        <p>${story.description}</p>
+
+        <button class="like-button" data-save-id="${story.id}">Simpan Story</button>
+
+        ${
+          hasLocation
+            ? `
+              <div class="story-location">
+                <small>Lokasi: ${story.lat}, ${story.lon}</small>
+                <div id="${mapId}" class="story-map" style="height: 150px; width: 100%;"></div>
+              </div>
+            `
+            : ""
+        }
+      </div>
+    </article>
+  `;
   }
 }

@@ -14,7 +14,7 @@ class HomePresenter {
     try {
       if (!token) throw new Error("No authentication token found");
 
-      // Coba ambil dari API
+      // Ambil dari API
       const response = await this._dicodingStoryApi.getAllStories(token);
 
       if (!response.ok) {
@@ -23,25 +23,42 @@ class HomePresenter {
 
       const stories = response.data.stories || response.data.listStory || [];
 
-      // Simpan ke IndexedDB satu per satu
+      // Simpan semua story ke IndexedDB (caching offline)
       for (const story of stories) {
         await saveStory(story);
       }
 
-      this._view.showStories(stories); // Tampilkan ke UI
-      this._view.initializeMaps(stories); // Inisialisasi peta
+      this._view.showStories(stories);
+      this._view.initializeMaps(stories);
+
+      // ⬇️ Tambahkan listener simpan story
+      this._setupLikeButtons(stories);
     } catch (error) {
-      // Jika gagal (misalnya offline), fallback ke IndexedDB
       console.error("Gagal mengambil dari API. Mengambil dari IndexedDB...", error);
       const cachedStories = await getCachedStories();
 
       if (cachedStories.length > 0) {
         this._view.showStories(cachedStories);
         this._view.initializeMaps(cachedStories);
+
+        // ⬇️ Setup tombol simpan juga dari cache
+        this._setupLikeButtons(cachedStories);
       } else {
         this._view.showError(error);
       }
     }
+  }
+
+  _setupLikeButtons(stories) {
+    stories.forEach((story) => {
+      const button = document.querySelector(`[data-save-id="${story.id}"]`);
+      if (button) {
+        button.addEventListener("click", async () => {
+          await saveStory(story);
+          alert("Story disimpan ke favorit!");
+        });
+      }
+    });
   }
 }
 

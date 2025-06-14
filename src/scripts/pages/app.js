@@ -1,7 +1,8 @@
 import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
-import {checkAuthenticatedRoute,checkUnauthenticatedRouteOnly,} from "../utils/auth";
+import { checkAuthenticatedRoute, checkUnauthenticatedRouteOnly } from "../utils/auth";
 import { updateAuthUI } from "../utils/auth-ui";
+import { isCurrentPushSubscriptionAvailable, subscribe, unsubscribe } from "../utils/notification-helper";
 
 class App {
   #content = null;
@@ -17,6 +18,7 @@ class App {
 
     this._setupDrawer();
     this._setupRouter();
+    this._setupPushNotification(); // Langkah tambahan
 
     window.addEventListener("hashchange", () => {
       this._renderPage();
@@ -32,10 +34,7 @@ class App {
     });
 
     document.body.addEventListener("click", (event) => {
-      if (
-        !this.#navigationDrawer.contains(event.target) &&
-        !this.#drawerButton.contains(event.target)
-      ) {
+      if (!this.#navigationDrawer.contains(event.target) && !this.#drawerButton.contains(event.target)) {
         this.#navigationDrawer.classList.remove("open");
       }
 
@@ -54,10 +53,7 @@ class App {
 
   async _renderPage() {
     try {
-      if (
-        this._currentPage &&
-        typeof this._currentPage.cleanup === "function"
-      ) {
+      if (this._currentPage && typeof this._currentPage.cleanup === "function") {
         await this._currentPage.cleanup();
       }
 
@@ -66,35 +62,58 @@ class App {
 
       const authenticatedPage = checkAuthenticatedRoute(page);
       const unauthenticatedPage = checkUnauthenticatedRouteOnly(page);
-      const finalPage =
-        authenticatedPage !== null
-          ? authenticatedPage
-          : unauthenticatedPage !== null
-            ? unauthenticatedPage
-            : page;
+      const finalPage = authenticatedPage !== null ? authenticatedPage : unauthenticatedPage !== null ? unauthenticatedPage : page;
 
       if (!finalPage) return;
 
-      if (this.supportsViewTransitions) {
+      const renderAndAttach = async () => {
         try {
-          const transition = document.startViewTransition(async () => {
-            this.#content.innerHTML = await finalPage.render();
-            await finalPage.afterRender();
-          });
-
-          await transition.ready;
-        } catch (transitionError) {
           this.#content.innerHTML = await finalPage.render();
           await finalPage.afterRender();
+        } catch (err) {
+          console.warn("⚠️ Halaman gagal dimuat:", err);
+          this.#content.innerHTML = `
+        <section class="offline-fallback">
+          <h2>Oops! Kamu sedang offline</h2>
+          <p>Konten tidak dapat dimuat. Silakan periksa koneksi internet kamu.</p>
+        </section>
+      `;
         }
+      };
+
+      if (this.supportsViewTransitions) {
+        const transition = document.startViewTransition(renderAndAttach);
+        await transition.ready;
       } else {
-        this.#content.innerHTML = await finalPage.render();
-        await finalPage.afterRender();
+        await renderAndAttach();
       }
 
       this._currentPage = finalPage;
     } catch (error) {
       console.error("Error during page render:", error);
+      this.#content.innerHTML = `
+    <section class="offline-fallback">
+      <h2>Kesalahan Tidak Terduga</h2>
+      <p>${error.message}</p>
+    </section>
+  `;
+    }
+  }
+
+  async #setupPushNotification() {
+    const container = document.getElementById("push-notification-tools");
+    const isSubscribed = await isCurrentPushSubscriptionAvailable();
+
+    if (isSubscribed) {
+      container.innerHTML = `<button id="unsubscribe-button">Unsubscribe</button>`;
+      document.getElementById("unsubscribe-button").addEventListener("click", () => {
+        unsubscribe().finally(() => this.#setupPushNotification());
+      });
+    } else {
+      container.innerHTML = `<button id="subscribe-button">Subscribe</button>`;
+      document.getElementById("subscribe-button").addEventListener("click", () => {
+        subscribe().finally(() => this.#setupPushNotification());
+      });
     }
   }
 }
