@@ -24,9 +24,9 @@ class HomePresenter {
       const stories = response.data.stories || response.data.listStory || [];
 
       // Simpan semua story ke IndexedDB (caching offline)
-      for (const story of stories) {
-        await saveStory(story);
-      }
+      // for (const story of stories) {
+      //   await saveStory(story);
+      // }
 
       this._view.showStories(stories);
       this._view.initializeMaps(stories);

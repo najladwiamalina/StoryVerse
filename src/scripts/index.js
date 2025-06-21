@@ -1,6 +1,7 @@
 import "../styles/styles.css";
 import App from "./pages/app";
 import Camera from "./utils/camera";
+import { subscribe } from "./utils/notification-helper";
 import StoryAPI from "./data/story-api"; // ⬅️ Tambahan
 import { getAccessToken } from "./utils/auth"; // ⬅️ Gunakan ini
 
@@ -39,13 +40,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const registration = await navigator.serviceWorker.register("/sw.js");
       console.log("✅ Service Worker terdaftar:", registration);
 
-      const subscription = await registerPush();
-      console.log("🔔 Push Subscription:", subscription);
+      if (registration) {
+        const subscription = await subscribe(); // ← fungsi yang benar
+        console.log("🔔 Subscription:", subscription);
 
-      // ✅ Kirim subscription ke backend jika user sudah login
-      if (subscription) {
-        const token = getAccessToken(); // pakai dari utils/auth
-        if (token) {
+        const token = getAccessToken();
+        if (token && subscription) {
           await StoryAPI.subscribePushNotification(token, subscription);
           console.log("✅ Push subscription dikirim ke server");
         }

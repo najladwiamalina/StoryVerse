@@ -18,7 +18,7 @@ class App {
 
     this._setupDrawer();
     this._setupRouter();
-    this._setupPushNotification(); // Langkah tambahan
+    this.#setupPushNotification(); // Langkah tambahan
 
     window.addEventListener("hashchange", () => {
       this._renderPage();
