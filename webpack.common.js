@@ -8,6 +8,7 @@ module.exports = {
   },
   output: {
     filename: "[name].bundle.js",
+    publicPath: "/StoryVerse/",
     path: path.resolve(__dirname, "dist"),
   },
   module: {
