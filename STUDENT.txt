@@ -1,0 +1,11 @@
+Name           : Dwiamalina Qurratuain Najla
+Dicoding Email : dwiamalinajla@gmail.com
+
+---------------------------------------
+
+MAP_SERVICE_API_KEY : Not Required  
+Description         : This project uses OpenStreetMap via Leaflet.js
+
+Deployment URL:
+https://najladwiamalina.github.io/StoryVerse/
+

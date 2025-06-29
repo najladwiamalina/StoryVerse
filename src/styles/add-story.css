@@ -1,0 +1,64 @@
+/* add-story.css */
+h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  #camera {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  #capture-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  
+  #capture-btn:hover {
+    background-color: #45a049;
+  }
+  
+  #photo-preview {
+    max-width: 100%;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  #map {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  #submit-btn {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #submit-btn:hover {
+    background-color: #007B9E;
+  }
+  
