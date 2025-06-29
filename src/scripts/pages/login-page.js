@@ -1,5 +1,4 @@
 import PushInitiator from "../utils/push-init";
-import { updateAuthUI } from "../utils/auth-ui";
 
 const LoginPage = {
   async render() {
@@ -51,7 +50,6 @@ const LoginPage = {
 
           await PushInitiator.init();
 
-          updateAuthUI();
           window.location.hash = "/";
         } catch (err) {
           alert(err.message || "Login gagal");

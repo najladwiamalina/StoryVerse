@@ -1,6 +1,5 @@
 import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
-import { updateAuthUI } from "../utils/auth-ui";
 
 class App {
   #content = null;
@@ -14,13 +13,6 @@ class App {
     this.#navigationDrawer = navigationDrawer;
 
     this._setupDrawer();
-
-    window.addEventListener("hashchange", () => {
-      this.renderPage();
-      updateAuthUI();
-    });
-
-    updateAuthUI();
   }
 
   _setupDrawer() {

@@ -1,5 +1,4 @@
 // File: src/scripts/pages/register-page.js
-import { updateAuthUI } from "../utils/auth-ui";
 
 const RegisterPage = {
   async render() {
@@ -48,7 +47,6 @@ const RegisterPage = {
           alert(`❌ Register gagal: ${result.message}`);
         } else {
           alert("✅ Berhasil daftar! Silakan login.");
-          updateAuthUI();
           window.location.hash = "/login";
         }
       } catch (err) {
