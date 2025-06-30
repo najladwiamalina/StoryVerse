@@ -135,7 +135,7 @@ h2 {
   background-color: #397145;
   color: #eed048;
   border-radius: 10px;
-  border: 1px solid #164a45;
+  border: 0.5rem solid #164a45;
   padding: 15px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
